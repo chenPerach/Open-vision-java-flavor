@@ -9,10 +9,7 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import org.opencv.core.Mat;
-import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.springframework.stereotype.Component;
 
 import lombok.Getter;
 
