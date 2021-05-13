@@ -25,9 +25,23 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
 }
 
 test {
 	useJUnitPlatform()
+}
+
+tasks.register("hello") {
+	println "Hello World!"
+}
+tasks.register("deploy") {
+	println "creating jar file"
+	dependsOn bootJar
+	println "Deploying code"
+
+	exec {
+		commandLine "cmd","/c","upload.bat"
+	}
 }
