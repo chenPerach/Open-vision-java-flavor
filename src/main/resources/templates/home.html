@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+</head>
+
+<body>
+    
+    <h1>Hello, this is home</h1> <br>
+    <img src="/stream" id="image" width="400" height="300">
+    <script>
+        const image = document.getElementById("image");
+        async function imgLooper() {
+            while(true){
+                await new Promise((res)=> setTimeout(res,40));
+                // const img = await fetch("/stream",{
+                //    method: "GET"
+                // })
+                image.src = "/stream?name="+Math.random().toString()
+                // console.log(data)
+                // image.src = URL.createObjectURL(data)
+            }
+        }
+        imgLooper()
+    </script>
+</body>
+</html>

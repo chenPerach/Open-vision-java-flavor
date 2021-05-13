@@ -12,6 +12,7 @@ import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class CameraThread implements Runnable {
     private static final String TAG = "CAM_THREAD";
@@ -19,6 +20,7 @@ public class CameraThread implements Runnable {
     private boolean interrupted;
     private Thread thread;
     private Mat placeHolder;
+    @Setter
     @Getter
     private byte[] img;
 
@@ -26,14 +28,12 @@ public class CameraThread implements Runnable {
         this.cam = new Camera(path);
         config();
     }
-    public CameraThread(String path) {
-        this.cam = new Camera(path);
-        config();
-    }
+    
     private void config(){
         interrupted = false;
         placeHolder = Imgcodecs.imread(Path.of("assets","pictures","place_holder.jpg").toString());
         thread = new Thread(this);
+        thread.setDaemon(true);
         thread.start();
     }
     public void interrupt(){
@@ -43,16 +43,24 @@ public class CameraThread implements Runnable {
     public void run() {
         Mat frame = new Mat();
         while (!interrupted) {
-            if (!cam.isOpen())
+            if (!cam.isOpen()){
+                Log.put(TAG,"coulden't open camera");
+                this.cam = new Camera(this.cam.getPath());
                 continue;
+            }
             cam.getFrame(frame);
             if (frame.empty()){
                 Log.put(TAG,"coulden't get image from camera");
                 frame = placeHolder;
             }
             img = mat2byte(frame);
+            try {
+                Thread.sleep(5);
+            } catch (Exception e) {
+            }
         }
         cam.release();
+        
     }
 
     private static byte[] mat2byte(Mat m) {
@@ -75,8 +83,7 @@ public class CameraThread implements Runnable {
 			byte[] imageInByte = baos.toByteArray();
 			baos.close();
 			return imageInByte;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
         return null;
     }

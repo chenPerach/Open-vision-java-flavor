@@ -15,6 +15,6 @@ public class VisionApplication {
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(VisionApplication.class, args);
-		System.out.println("loaded OpenCV version: "+Core.VERSION);
+		System.out.println("loaded OpenCV \n using version: "+Core.VERSION);
 	}
 }

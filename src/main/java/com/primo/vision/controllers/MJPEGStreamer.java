@@ -11,8 +11,9 @@ import com.primo.vision.Components.CameraThread;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-@Controller
+@Controller(value = "/api/")
 public class MJPEGStreamer {
     CameraThread stream;
 
@@ -21,24 +22,28 @@ public class MJPEGStreamer {
     }
 
     @GetMapping(path = "/stream")
-    public void streamMjpeg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public StreamingResponseBody streamMjpeg(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
         response.setContentType("multipart/x-mixed-replace; boundary=--BoundaryString");
-        OutputStream sOutputStream = response.getOutputStream();
-
-        while (true) {
+        return (os) -> {
             byte[] nextFrame = stream.getImg();
-
+            if (nextFrame == null)
+                return;
             try {
-                sOutputStream.write(("--BoundaryString\r\n" + "Content-type: image/jpeg\r\n" + "Content-Length: "
+                os.write(("--BoundaryString\r\n" + "Content-type: image/jpeg\r\n" + "Content-Length: "
                         + nextFrame.length + "\r\n\r\n").getBytes());
-                sOutputStream.write(nextFrame);
-                sOutputStream.write("\r\n\r\n".getBytes());
-                sOutputStream.flush();
-                TimeUnit.MILLISECONDS.sleep(40);
+                os.write(nextFrame);
+                os.write("\r\n\r\n".getBytes());
+                os.flush();
             } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
+        };
     }
+
+    @GetMapping("/home")
+    public String homePage() {
+        return "home";
+    }
+
 }
